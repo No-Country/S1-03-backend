@@ -32,8 +32,11 @@ public class Client implements Serializable {
     private String mail;
     @Column(name = "profile_image")
     private String profileImage;
+    /*
+    COMENTADA HASTA REALIZAR LA RELACION BIEN
     @Column(name = "friend_list")
     private List<Client> friendList;
+    */
     private Role role; // ver
     
     
