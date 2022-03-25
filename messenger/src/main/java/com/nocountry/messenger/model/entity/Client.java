@@ -8,11 +8,13 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.Table;
+import lombok.Builder;
 import lombok.Data;
 
 @Data
 @Entity
 @Table(name = "Client")
+@Builder
 public class Client implements Serializable {
 
     private static final Long SerialVersionUID = 1L;
@@ -23,16 +25,16 @@ public class Client implements Serializable {
     @Column(name = "name")
     private String name;
     @Column(name = "lastname")
-    private String lastname;
-    @Column(name = "clientname")
-    private String clientname;
+    private String lastName;
+    @Column(name = "username")
+    private String userName;
     @Column(name = "mail")
     private String mail;
-    @Column(name = "profilImage")
+    @Column(name = "profile_image")
     private String profileImage;
-    @Column(name = "friendList")
-    private List<Client> friendlist;
-    private Rol rol; // ver
+    @Column(name = "friend_list")
+    private List<Client> friendList;
+    private Role role; // ver
     
     
 }

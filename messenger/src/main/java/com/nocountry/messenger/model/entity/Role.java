@@ -1,6 +1,6 @@
 package com.nocountry.messenger.model.entity;
 
-public enum Rol {
+public enum Role {
     
     ADMIN, USER;
     
