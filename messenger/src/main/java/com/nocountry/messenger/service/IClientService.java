@@ -1,8 +1,7 @@
 package com.nocountry.messenger.service;
 
 import com.nocountry.messenger.dto.request.ClientModel;
-import com.nocountry.messenger.model.entity.Client;
-import java.util.Optional;
+import com.nocountry.messenger.dto.response.ListClientResponse;
 import org.springframework.stereotype.Service;
 
 @Service
@@ -12,5 +11,7 @@ public interface IClientService {
     
     void deleteById(Long id);
     
-    Optional<Client> update(ClientModel client);
+    ListClientResponse listClients();
+    
+    ClientModel update(ClientModel client);
 }

@@ -22,14 +22,19 @@ public class Client implements Serializable {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id_client")
     private Long idClient;
+    
     @Column(name = "name")
     private String name;
+    
     @Column(name = "lastname")
     private String lastName;
-    @Column(name = "username")
+    
+    @Column(unique = true, name = "username")
     private String userName;
-    @Column(name = "mail")
+    
+    @Column(unique = true, name = "mail")
     private String mail;
+    
     @Column(name = "profile_image")
     private String profileImage;
     /*
@@ -37,7 +42,10 @@ public class Client implements Serializable {
     @Column(name = "friend_list")
     private List<Client> friendList;
     */
+    
+    @Column(name = "role")
     private Role role; // ver
     
-    
+    @Column(name = "soft_delete")
+    private boolean softDelete;
 }
