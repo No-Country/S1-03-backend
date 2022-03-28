@@ -7,7 +7,7 @@ import lombok.Data;
 
 @Data
 @Builder
-public class ClientModel {
+public class ClientRequest {
 
     @NotNull(message = "Name cannot be null.")
     private String name;
