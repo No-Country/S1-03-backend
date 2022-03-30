@@ -1,6 +1,7 @@
 package com.nocountry.messenger.dto.response;
 
 import com.nocountry.messenger.model.entity.Role;
+import java.util.Set;
 import lombok.Builder;
 
 @Builder
@@ -18,7 +19,7 @@ public class ClientResponse {
     
     private String profileImage;
     
-    private Role role; // ver
+    private Set<Role> role; // ver
 
     public Long getIdClient() {
         return idClient;
@@ -68,11 +69,11 @@ public class ClientResponse {
         this.profileImage = profileImage;
     }
 
-    public Role getRole() {
+    public Set<Role> getRole() {
         return role;
     }
 
-    public void setRole(Role role) {
+    public void setRole(Set<Role> role) {
         this.role = role;
     }
 }

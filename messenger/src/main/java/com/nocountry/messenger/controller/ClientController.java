@@ -1,73 +1,137 @@
 package com.nocountry.messenger.controller;
 
 import com.nocountry.messenger.dto.request.ClientRequest;
-import com.nocountry.messenger.dto.response.DeleteOkResponse;
-import com.nocountry.messenger.exception.custom.ClientAlreadyExist;
-import com.nocountry.messenger.exception.custom.ExceptionHandler;
-import com.nocountry.messenger.service.IClientService;
-import java.util.NoSuchElementException;
+import com.nocountry.messenger.dto.request.LoginRequest;
+import com.nocountry.messenger.dto.response.JwtResponse;
+import com.nocountry.messenger.dto.response.MessageResponse;
+import com.nocountry.messenger.model.entity.Client;
+import com.nocountry.messenger.model.entity.Role;
+import com.nocountry.messenger.model.entity.ERole;
+import com.nocountry.messenger.repository.IClientRepository;
+import com.nocountry.messenger.repository.IRoleRepository;
+import com.nocountry.messenger.security.UserDetailsImpl;
+import com.nocountry.messenger.security.jwt.JwtUtils;
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
+import java.util.stream.Collectors;
 import javax.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.DeleteMapping;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
-@RequestMapping("/clients")
+@RequestMapping("/api/auth")
 public class ClientController {
-    
+
     @Autowired
-    private IClientService clientService;
-    
-    @PostMapping(
-            produces = MediaType.APPLICATION_JSON_VALUE,
-            consumes = MediaType.APPLICATION_JSON_VALUE
-    )
-    public ResponseEntity<?> create(@Valid @RequestBody ClientRequest clientModel)
-    throws ClientAlreadyExist {
-        try {
-            clientService.create(clientModel);
-            return new ResponseEntity<>(clientModel , HttpStatus.CREATED);
-        } catch (ClientAlreadyExist e) {
-            return ExceptionHandler.throwError(HttpStatus.BAD_REQUEST, e.getMessage());
-        } catch (Exception e) {
-            return ExceptionHandler.throwError(HttpStatus.BAD_REQUEST, e.getMessage());
-        }
+    AuthenticationManager authenticationManager;
+
+    @Autowired
+    IClientRepository clientRepository;
+
+    @Autowired
+    IRoleRepository roleRepository;
+
+    @Autowired
+    PasswordEncoder encoder;
+
+    @Autowired
+    JwtUtils jwtUtils;
+
+    @PostMapping("/signin")
+    public ResponseEntity<?> authenticateUser(@Valid @RequestBody LoginRequest loginRequest) {
+        Authentication authentication = authenticationManager.authenticate(
+                new UsernamePasswordAuthenticationToken(loginRequest.getUsername(), loginRequest.getPassword()));
+        SecurityContextHolder.getContext().setAuthentication(authentication);
+        String jwt = jwtUtils.generateJwtToken(authentication);
+
+        UserDetailsImpl userDetails = (UserDetailsImpl) authentication.getPrincipal();
+        List<String> roles = userDetails.getAuthorities().stream()
+                .map(item -> item.getAuthority())
+                .collect(Collectors.toList());
+        return ResponseEntity.ok(new JwtResponse(jwt,
+                userDetails.getId(),
+                userDetails.getUsername(),
+                userDetails.getEmail(),
+                roles));
     }
-    
-    @GetMapping(produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<?> listClients() {
-        return new ResponseEntity<>(clientService.listClients(), HttpStatus.OK);
-    }
-    
-    @PutMapping(value = "/{id}",
-            produces = MediaType.APPLICATION_JSON_VALUE,
-            consumes = MediaType.APPLICATION_JSON_VALUE
-    )
-    public ResponseEntity<?> update (@Valid @RequestBody ClientRequest request, @PathVariable Long id)
-    throws NoSuchElementException{
-        try {
-            return new ResponseEntity<>(clientService.update(request, id), HttpStatus.OK);
-        } catch (NoSuchElementException e) {
-            return ExceptionHandler.throwError(HttpStatus.NOT_FOUND, e.getMessage());
+
+    @PostMapping("/signup")
+    public ResponseEntity<?> registerUser(@Valid @RequestBody ClientRequest signUpRequest) {
+        
+        if (clientRepository.existsByUserName(signUpRequest.getUsername())) {
+            return ResponseEntity
+                    .badRequest()
+                    .body(new MessageResponse("Error: Username is already taken!"));
         }
-    }
-    
-    @DeleteMapping(value = "/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<?> delete(@Valid @PathVariable Long id) {
-        try {
-            clientService.delete(id);
-            return DeleteOkResponse.deleteOk(HttpStatus.OK, id);
-        } catch (NoSuchElementException e) {
-            return ExceptionHandler.throwError(HttpStatus.NOT_FOUND, e.getMessage());
+        
+        if (clientRepository.existsByMail(signUpRequest.getEmail())) {
+            return ResponseEntity
+                    .badRequest()
+                    .body(new MessageResponse("Error: Email is already in use!"));
         }
+        
+        // Create new user's account
+        Client user = Client.builder()
+                .name(signUpRequest.getName())
+                .lastName(signUpRequest.getLastName())
+                .userName(signUpRequest.getUsername())
+                .password(encoder.encode(signUpRequest.getPassword()))
+                .mail(signUpRequest.getEmail())
+                .document(signUpRequest.getDocument())
+                .birthdate(string2LocalDate(signUpRequest.getBirthdate()))
+                .address(signUpRequest.getAddress())
+                .phoneNumber(signUpRequest.getPhoneNumber())
+                //AGREGAR PROFILE IMAGE ACÁ
+                .build();
+        
+        Set<String> strRoles = signUpRequest.getRole();
+        Set<Role> roles = new HashSet<>();
+        
+        if (strRoles == null) {
+            Role userRole = roleRepository.findByName(ERole.ROLE_USER)
+                    .orElseThrow(() -> new RuntimeException("Error: Role is not found."));
+            roles.add(userRole);
+        } else {
+            strRoles.forEach(role -> {
+                switch (role) {
+                    case "admin":
+                        Role adminRole = roleRepository.findByName(ERole.ROLE_ADMIN)
+                                .orElseThrow(() -> new RuntimeException("Error: Role is not found."));
+                        roles.add(adminRole);
+                        break;
+                    case "mod":
+                        Role modRole = roleRepository.findByName(ERole.ROLE_MODERATOR)
+                                .orElseThrow(() -> new RuntimeException("Error: Role is not found."));
+                        roles.add(modRole);
+                        break;
+                    default:
+                        Role userRole = roleRepository.findByName(ERole.ROLE_USER)
+                                .orElseThrow(() -> new RuntimeException("Error: Role is not found."));
+                        roles.add(userRole);
+                }
+            });
+        }
+        user.setRoles(roles);
+        clientRepository.save(user);
+        
+        return ResponseEntity.ok(new MessageResponse("User registered successfully!"));
+    }
+
+    private LocalDate string2LocalDate(String stringDate) {
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy/MM/dd");
+        LocalDate date = LocalDate.parse(stringDate, formatter);
+        return date;
     }
 }
