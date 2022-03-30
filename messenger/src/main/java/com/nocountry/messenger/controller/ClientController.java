@@ -87,6 +87,7 @@ public class ClientController {
                 .name(signUpRequest.getName())
                 .lastName(signUpRequest.getLastName())
                 .userName(signUpRequest.getUsername())
+                .password(encoder.encode(signUpRequest.getPassword()))
                 .mail(signUpRequest.getEmail())
                 .document(signUpRequest.getDocument())
                 .birthdate(string2LocalDate(signUpRequest.getBirthdate()))
