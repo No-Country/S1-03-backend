@@ -39,6 +39,9 @@ public class Cliente implements Serializable {
     @Column(unique = true, name = "mail")
     private String mail;
     
+    @Column(unique = true, name = "password")
+    private String password;
+    
     @Column(name = "profile_image")
     private String profileImage;
     

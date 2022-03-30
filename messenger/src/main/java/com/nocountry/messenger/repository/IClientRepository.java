@@ -16,4 +16,9 @@ public interface IClientRepository extends JpaRepository< Cliente , Long> {
     boolean existsByUserName(String userName);
     
     boolean existsByMail(String mail);
+
+    public Object findByUsername(String username);
+
+    Boolean existsByUsername(String username);
+
 }
