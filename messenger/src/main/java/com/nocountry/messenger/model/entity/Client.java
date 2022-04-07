@@ -14,6 +14,7 @@ import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.JoinTable;
 import javax.persistence.ManyToMany;
+import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -50,10 +51,10 @@ public class Client implements Serializable {
 
     @Column(unique = true, name = "username")
     private String userName;
-    
+
     @Column(name = "phone_number")
     private Long phoneNumber;
-    
+
     @Column(name = "dni")
     private Long document;
 
@@ -66,7 +67,7 @@ public class Client implements Serializable {
             pattern = "yyyy/MM/dd"
     )
     private LocalDate birthdate;
-    
+
     @Column(name = "password")
     private String password;
 
@@ -77,17 +78,63 @@ public class Client implements Serializable {
     @Column(name = "profile_image")
     private String profileImage;
 
-    /*
-    COMENTADA HASTA REALIZAR LA RELACION BIEN
-    @Column(name = "friend_list")
-    private List<Client> friendList;
-     */
     @ManyToMany(fetch = FetchType.EAGER)
     @JoinTable(name = "users_roles",
             joinColumns = @JoinColumn(name = "id_user"),
             inverseJoinColumns = @JoinColumn(name = "id_role"))
+    @Builder.Default
     private Set<Role> roles = new HashSet<>();
 
     @Column(name = "soft_delete")
     private boolean softDelete;
+
+    @ManyToMany(fetch = FetchType.EAGER)
+    @JoinTable(name = "fiend_list",
+            joinColumns = @JoinColumn(name = "id_user"),
+            inverseJoinColumns = @JoinColumn(name = "id_friend"))
+    @Builder.Default
+    private Set<Client> friends = new HashSet<>();
+
+    @OneToMany(mappedBy = "sender")
+    private Set<FriendshipInvitation> sendedInvitations = new HashSet<>();
+
+    @OneToMany(mappedBy = "receiver")
+    private Set<FriendshipInvitation> receivedInvitations = new HashSet<>();
+
+    /*
+    public boolean canInvite(String email) {
+        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+        String activeEmail = auth.getName();
+        if (email == activeEmail) {
+            return false;
+        }
+        for (User user : friends) {
+            if (user.getEmail().equals(activeEmail)) {
+                return false;
+            }
+        }
+        for (Invitation invitation : sendedInvitations) {
+            if (invitation.getReceiver().getEmail().equals(activeEmail)) {
+                return false;
+            }
+        }
+        for (Invitation invitation : receivedInvitations) {
+            if (invitation.getSender().getEmail().equals(activeEmail)) {
+                return false;
+            }
+        }
+        return true;
+    }
+    */
+    
+    public boolean canInvite(String username) {
+        
+        
+        return false;
+    }
+    
+    public void addFriend(Client client) {
+        friends.add(client);
+        client.getFriends().add(this);
+    }
 }
