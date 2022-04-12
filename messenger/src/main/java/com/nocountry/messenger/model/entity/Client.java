@@ -89,7 +89,7 @@ public class Client implements Serializable {
     private boolean softDelete;
 
     @ManyToMany(fetch = FetchType.EAGER)
-    @JoinTable(name = "fiend_list",
+    @JoinTable(name = "friend_list",
             joinColumns = @JoinColumn(name = "id_user"),
             inverseJoinColumns = @JoinColumn(name = "id_friend"))
     @Builder.Default

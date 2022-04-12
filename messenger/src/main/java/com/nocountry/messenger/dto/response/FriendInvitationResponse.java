@@ -1,7 +1,7 @@
 package com.nocountry.messenger.dto.response;
 
 import com.nocountry.messenger.model.entity.Client;
-import com.nocountry.messenger.model.entity.EState;
+import com.nocountry.messenger.model.entity.EFriendshipInvitationState;
 import java.util.Date;
 import lombok.Builder;
 import lombok.Data;
@@ -16,7 +16,7 @@ public class FriendInvitationResponse {
     
     private Client receiver;
 
-    private EState state;
+    private EFriendshipInvitationState state;
     
     private Date creationTimestamp;
 

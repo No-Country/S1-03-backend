@@ -116,6 +116,8 @@ public class UserDetailsServiceImpl implements UserDetailsService, IClientServic
         return clientRepository.findByUserName(userName)
                 .orElseThrow(() -> new NoSuchElementException(MessageFormat.format(USER_NAME_NOT_FOUND, userName)));
     }
+    
+    
 
     
 }

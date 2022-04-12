@@ -1,19 +1,19 @@
 package com.nocountry.messenger.service;
 
-import com.nocountry.messenger.dto.request.FriendshipInvitationRequest;
 import com.nocountry.messenger.exception.custom.FriendshipInvitationException;
 import com.nocountry.messenger.model.entity.Client;
+import com.nocountry.messenger.model.entity.FriendshipInvitation;
 import org.springframework.stereotype.Service;
 
 @Service
 public interface FriendshipInvitationService {
     
-    FriendshipInvitationRequest createFriendshipInvitation(Client sender, Client receiver)
+    FriendshipInvitation createFriendshipInvitation(Client sender, Client receiver)
         throws FriendshipInvitationException;
 
-    void acceptFriendshipInvitation (FriendshipInvitationRequest request, Client receiver)
+    void acceptFriendshipInvitation (FriendshipInvitation request, Client receiver)
         throws FriendshipInvitationException;
 
-    void declineFriendshipInvitation(FriendshipInvitationRequest request, Client receiver)
+    void declineFriendshipInvitation(FriendshipInvitation request, Client receiver)
         throws FriendshipInvitationException;
 }

@@ -1,6 +1,6 @@
 package com.nocountry.messenger.model.entity;
 
-public enum EState {
+public enum EFriendshipInvitationState {
     
     OPEN,
     ACCEPTED,

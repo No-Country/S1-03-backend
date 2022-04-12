@@ -30,7 +30,7 @@ public class FriendshipInvitation {
     private Client receiver;
 
     @Column(name = "state", nullable = false)
-    public static EState state;
+    public static EFriendshipInvitationState state;
 
     @Column(name = "creationTimestamp", nullable = false)
     private Date creationTimestamp;
@@ -38,18 +38,11 @@ public class FriendshipInvitation {
     @JoinColumn(name = "answerTimestamp")
     private Date answerTimestamp;
 
-    public static EState getState() {
+    public static EFriendshipInvitationState getState() {
         return state;
     }
 
-    public static void setState(EState state) {
+    public static void setState(EFriendshipInvitationState state) {
         FriendshipInvitation.state = state;
     }
 }
-
-/*
-request.setState(FriendshipInvitation.State.OPEN);
-if (request.getState() == FriendshipInvitation.State.OPEN) {
-    (...)
-}
-*/
