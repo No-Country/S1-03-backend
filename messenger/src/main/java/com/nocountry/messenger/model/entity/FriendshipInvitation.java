@@ -1,5 +1,6 @@
 package com.nocountry.messenger.model.entity;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import java.util.Date;
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -9,11 +10,18 @@ import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Data;
+import lombok.NoArgsConstructor;
+import org.springframework.format.annotation.DateTimeFormat;
 
 @Entity
 @Table(name = "invitation")
 @Data
+@Builder
+@AllArgsConstructor
+@NoArgsConstructor
 public class FriendshipInvitation {
 
     @Id
@@ -30,19 +38,16 @@ public class FriendshipInvitation {
     private Client receiver;
 
     @Column(name = "state", nullable = false)
-    public static EFriendshipInvitationState state;
+    public EFriendshipInvitationState state;
 
     @Column(name = "creationTimestamp", nullable = false)
+    @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss")  // ver
+    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
     private Date creationTimestamp;
 
-    @JoinColumn(name = "answerTimestamp")
+    @Column(name = "answerTimestamp")
+    @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss")
+    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
     private Date answerTimestamp;
 
-    public static EFriendshipInvitationState getState() {
-        return state;
-    }
-
-    public static void setState(EFriendshipInvitationState state) {
-        FriendshipInvitation.state = state;
-    }
 }

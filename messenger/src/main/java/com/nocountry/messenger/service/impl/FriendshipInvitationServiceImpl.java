@@ -1,10 +1,12 @@
 package com.nocountry.messenger.service.impl;
 
+import com.nocountry.messenger.dto.response.FriendInvitationResponse;
 import com.nocountry.messenger.exception.custom.FriendshipInvitationException;
 import com.nocountry.messenger.model.entity.Client;
 import com.nocountry.messenger.model.entity.EFriendshipInvitationState;
 import com.nocountry.messenger.model.entity.FriendshipInvitation;
 import com.nocountry.messenger.repository.FriendshipInvitationRepository;
+import com.nocountry.messenger.security.service.UserDetailsServiceImpl;
 import com.nocountry.messenger.service.FriendshipInvitationService;
 import java.util.Date;
 import java.util.List;
@@ -17,28 +19,34 @@ import org.springframework.transaction.annotation.Transactional;
 public class FriendshipInvitationServiceImpl implements FriendshipInvitationService {
 
     @Autowired
+    private UserDetailsServiceImpl clientServiceImpl;
+    
+    @Autowired
     private FriendshipInvitationRepository friendshipInvitationRepository;
 
     @Override
     @Transactional(propagation = Propagation.REQUIRED, rollbackFor = { Exception.class })
-    public FriendshipInvitation createFriendshipInvitation(Client sender, Client receiver) 
-            
+    public FriendshipInvitation createFriendshipInvitation(String sender, String receiver)
         throws FriendshipInvitationException {
-        if (sender.getFriends().contains(receiver)) {
+        
+        Client NewFriend = clientServiceImpl.getByUserName(receiver);
+        Client senderInvitation = clientServiceImpl.getByUserName(sender);
+        
+        if (senderInvitation.getFriends().contains(receiver)) {
             throw new FriendshipInvitationException("Users are friends already");
         } else if (!friendshipInvitationRepository
-                    .findBySenderAndReceiverAndState(sender, receiver, FriendshipInvitation.state.OPEN).isEmpty()) {
+                    .findBySenderAndReceiverAndState(senderInvitation, NewFriend, EFriendshipInvitationState.OPEN).isEmpty()) {
             throw new FriendshipInvitationException("A pending request exists");
         } else if (!friendshipInvitationRepository
-                    .findBySenderAndReceiverAndState(receiver, sender, FriendshipInvitation.state.OPEN).isEmpty()) {
+                    .findBySenderAndReceiverAndState(NewFriend, senderInvitation, EFriendshipInvitationState.OPEN).isEmpty()) {
             throw new FriendshipInvitationException("A pending request exists");
         } 
         
         FriendshipInvitation invitation = new FriendshipInvitation();
-        invitation.setSender(sender);
-        invitation.setReceiver(receiver);
+        invitation.setSender(senderInvitation);
+        invitation.setReceiver(NewFriend);
         invitation.setCreationTimestamp(new Date());
-        invitation.setState(FriendshipInvitation.state.OPEN);
+        invitation.setState(EFriendshipInvitationState.OPEN);
         friendshipInvitationRepository.save(invitation);
         
         return invitation; // ver
@@ -46,8 +54,27 @@ public class FriendshipInvitationServiceImpl implements FriendshipInvitationServ
 
     @Override
     @Transactional(propagation = Propagation.REQUIRED, rollbackFor = { Exception.class })
-    public void acceptFriendshipInvitation(FriendshipInvitation request, Client receiver)
+    public void respondFriendshipInvitation(FriendInvitationResponse response)
         throws FriendshipInvitationException {
+        
+        boolean isExists = friendshipInvitationRepository.existsById(response.getIdInvitation());
+        
+        if (isExists) {
+            FriendshipInvitation friend = friendshipInvitationRepository.getById(response.getIdInvitation());
+            /*
+                if(response.gerState()==EFriendfshipInvitationState.ACCEPTED){
+                agregar a la lista de friends el nuevo amigo. Declarar el otro cliente para setearlo en la otra lista
+                obtener el sender con el friend.getSender desde friendshipRepository.getById 
+            }
+            */
+            //friend.builder().state(response.getState()).answerTimestamp(new Date()).build();
+            friend.setAnswerTimestamp(new Date());
+            friend.setState(response.getState());
+            //System.out.println("friend " + friend.getState());
+            friendshipInvitationRepository.save(friend);
+        } 
+        
+        
         
         /*
         if (request.getState() == FriendshipInvitation.state.OPEN) {
@@ -57,23 +84,10 @@ public class FriendshipInvitationServiceImpl implements FriendshipInvitationServ
         */
   
     }
-
-    @Override
-    @Transactional(propagation = Propagation.REQUIRED, rollbackFor = { Exception.class })
-    public void declineFriendshipInvitation(FriendshipInvitation request, Client receiver) 
-        throws FriendshipInvitationException {
-        
-        /*
-        if (request.getState() == FriendshipInvitation.state.OPEN) {
-            request.setState(FriendshipInvitation.state.DECLINED);
-        }
-        */
-        
-    }
     
     @Transactional(propagation = Propagation.REQUIRED, rollbackFor = { Exception.class })
     public List<FriendshipInvitation> readfriendshipInvitations(Client loggedUserReceiver, EFriendshipInvitationState state) { // receiver = usuario loggeado
-        List<FriendshipInvitation> friendshipInvitationList = friendshipInvitationRepository.findByReceiverAndState(loggedUserReceiver, FriendshipInvitation.state.OPEN);
+        List<FriendshipInvitation> friendshipInvitationList = friendshipInvitationRepository.findByReceiverAndState(loggedUserReceiver, EFriendshipInvitationState.OPEN);
         return friendshipInvitationList;
     }
 

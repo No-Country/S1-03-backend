@@ -4,6 +4,7 @@ import java.io.Serializable;
 import java.time.LocalDate;
 import java.util.Set;
 import java.util.HashSet;
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.UniqueConstraint;
 import javax.persistence.Entity;
@@ -88,7 +89,7 @@ public class Client implements Serializable {
     @Column(name = "soft_delete")
     private boolean softDelete;
 
-    @ManyToMany(fetch = FetchType.EAGER)
+    @ManyToMany(cascade = CascadeType.PERSIST, fetch = FetchType.EAGER)  // ver relacion
     @JoinTable(name = "friend_list",
             joinColumns = @JoinColumn(name = "id_user"),
             inverseJoinColumns = @JoinColumn(name = "id_friend"))
