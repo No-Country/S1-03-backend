@@ -11,5 +11,6 @@ import org.springframework.stereotype.Repository;
 public interface FriendshipInvitationRepository extends JpaRepository<FriendshipInvitation, Long> {
     
     List<FriendshipInvitation> findBySenderAndReceiverAndState(Client sender, Client receiver, EFriendshipInvitationState state);
-    List<FriendshipInvitation> findByReceiverAndState(Client receiver, EFriendshipInvitationState state);
+    List<FriendshipInvitation> findByReceiverAndState(Client receiver, EFriendshipInvitationState state); 
+
 }
