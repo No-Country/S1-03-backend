@@ -2,8 +2,10 @@ package com.nocountry.messenger.model.entity;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 import java.util.Date;
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
@@ -29,11 +31,11 @@ public class FriendshipInvitation {
     @Column(name = "id_invitation")
     private Long idInvitation;
 
-    @ManyToOne // (optional = false, cascade = CascadeType.ALL, fetch = FetchType.EAGER)
+    @ManyToOne(cascade = CascadeType.PERSIST, fetch = FetchType.LAZY)
     @JoinColumn(name = "sender_id")
     private Client sender;
 
-    @ManyToOne
+    @ManyToOne(cascade = CascadeType.PERSIST, fetch = FetchType.LAZY)
     @JoinColumn(name = "receiver_id")
     private Client receiver;
 

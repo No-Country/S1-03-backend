@@ -47,7 +47,8 @@ public class MainController {
         } 
       
     }
-        /*
+    
+    /*
     @GetMapping("/readFriendshipInvitation")
     public String readFriendshipInvitation(Authentication loggedUserReceiver, ModelMap model) {
         try {
