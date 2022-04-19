@@ -7,10 +7,14 @@ import com.nocountry.messenger.model.entity.Client;
 import com.nocountry.messenger.repository.IClientRepository;
 import com.nocountry.messenger.security.UserDetailsImpl;
 import com.nocountry.messenger.service.IClientService;
+import java.io.IOException;
 import java.text.MessageFormat;
 import java.util.ArrayList;
+import java.util.Base64;
 import java.util.List;
 import java.util.NoSuchElementException;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
@@ -18,6 +22,8 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.util.StringUtils;
+import org.springframework.web.multipart.MultipartFile;
 
 @Service
 public class UserDetailsServiceImpl implements UserDetailsService, IClientService {
@@ -27,6 +33,9 @@ public class UserDetailsServiceImpl implements UserDetailsService, IClientServic
 
     @Autowired
     IClientRepository clientRepository;
+    
+    @Autowired
+    Client client;
 
     // Interfaz User Detail
     @Override
@@ -38,6 +47,7 @@ public class UserDetailsServiceImpl implements UserDetailsService, IClientServic
     }
     
     // Interfaz Client
+    
     @Override
     @Transactional(propagation = Propagation.REQUIRED, rollbackFor = { Exception.class })
     public ListClientResponse listClients() {
@@ -118,6 +128,17 @@ public class UserDetailsServiceImpl implements UserDetailsService, IClientServic
     }
     
     
+    @Transactional(propagation = Propagation.REQUIRED, rollbackFor = { Exception.class })
+    public void addImage(String userName, MultipartFile url) {
+        try {
+            Client clientWithProfileImage = clientRepository.getByUserName(userName);
+            String fileName = StringUtils.cleanPath(url.getOriginalFilename());
+            client.setProfileImage((Base64.getEncoder().encodeToString(url.getBytes())));
+            clientRepository.save(clientWithProfileImage);
+        } catch (IOException ex) {
+            Logger.getLogger(UserDetailsServiceImpl.class.getName()).log(Level.SEVERE, null, ex);
+        }
+    }
 
     
 }

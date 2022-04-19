@@ -11,6 +11,7 @@ import com.nocountry.messenger.repository.IClientRepository;
 import com.nocountry.messenger.repository.IRoleRepository;
 import com.nocountry.messenger.security.UserDetailsImpl;
 import com.nocountry.messenger.security.jwt.JwtUtils;
+import com.nocountry.messenger.security.service.UserDetailsServiceImpl;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.util.HashSet;
@@ -26,10 +27,12 @@ import org.springframework.security.authentication.UsernamePasswordAuthenticatio
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.CrossOrigin;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.multipart.MultipartFile;
 
 @RestController
 @RequestMapping("/api/auth")
@@ -41,6 +44,9 @@ public class ClientController {
 
     @Autowired
     IClientRepository clientRepository;
+    
+    @Autowired
+    UserDetailsServiceImpl userDetailsServiceImpl;
 
     @Autowired
     IRoleRepository roleRepository;
@@ -71,19 +77,19 @@ public class ClientController {
 
     @PostMapping("/signup")
     public ResponseEntity<?> registerUser(@Valid @RequestBody ClientRequest signUpRequest) {
-        
+
         if (clientRepository.existsByUserName(signUpRequest.getUsername())) {
             return ResponseEntity
                     .badRequest()
                     .body(new MessageResponse("Error: Username is already taken!"));
         }
-        
+
         if (clientRepository.existsByMail(signUpRequest.getEmail())) {
             return ResponseEntity
                     .badRequest()
                     .body(new MessageResponse("Error: Email is already in use!"));
         }
-        
+
         // Create new user's account
         Client user = Client.builder()
                 .name(signUpRequest.getName())
@@ -97,10 +103,10 @@ public class ClientController {
                 .phoneNumber(signUpRequest.getPhoneNumber())
                 //AGREGAR PROFILE IMAGE ACÁ
                 .build();
-        
+
         Set<String> strRoles = signUpRequest.getRole();
         Set<Role> roles = new HashSet<>();
-        
+
         if (strRoles == null) {
             Role userRole = roleRepository.findByName(ERole.ROLE_USER)
                     .orElseThrow(() -> new RuntimeException("Error: Role is not found."));
@@ -127,7 +133,7 @@ public class ClientController {
         }
         user.setRoles(roles);
         clientRepository.save(user);
-        
+
         return ResponseEntity.ok(new MessageResponse("User registered successfully!"));
     }
 
@@ -136,4 +142,16 @@ public class ClientController {
         LocalDate date = LocalDate.parse(stringDate, formatter);
         return date;
     }
+
+    @PostMapping("/addImage")
+    public String addImage(String userName, MultipartFile archivo) {
+        try {
+            userDetailsServiceImpl.addImage(userName, archivo);
+            return "redirect:/api/auth";
+        } catch (Exception e) {
+            return "No se pudo agregar la imagen";
+        }
+
+    }
+
 }
