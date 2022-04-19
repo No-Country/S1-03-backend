@@ -2,8 +2,10 @@ package com.nocountry.messenger.model.entity;
 
 import java.io.Serializable;
 import java.time.LocalDate;
+import java.util.ArrayList;
 import java.util.Set;
 import java.util.HashSet;
+import java.util.List;
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.UniqueConstraint;
@@ -89,12 +91,11 @@ public class Client implements Serializable {
     @Column(name = "soft_delete")
     private boolean softDelete;
 
-    @ManyToMany(cascade = CascadeType.PERSIST, fetch = FetchType.EAGER)  // ver relacion
+    @ManyToMany( fetch = FetchType.LAZY)  //FetchType cambiado a LAZY por stackOverflowerror
     @JoinTable(name = "friend_list",
             joinColumns = @JoinColumn(name = "id_user"),
             inverseJoinColumns = @JoinColumn(name = "id_friend"))
-    @Builder.Default
-    private Set<Client> friends = new HashSet<>();
+    private List<Client> friends = new ArrayList<>();
 
     @OneToMany(mappedBy = "sender")
     private Set<FriendshipInvitation> sendedInvitations = new HashSet<>();
@@ -132,10 +133,5 @@ public class Client implements Serializable {
         
         
         return false;
-    }
-    
-    public void addFriend(Client client) {
-        friends.add(client);
-        client.getFriends().add(this);
     }
 }
