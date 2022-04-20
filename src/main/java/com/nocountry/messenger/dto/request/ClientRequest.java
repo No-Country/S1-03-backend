@@ -54,5 +54,5 @@ public class ClientRequest {
     private Set<FriendshipInvitation> sendedInvitations;
             
     private Set<FriendshipInvitation> receivedInvitations;
-    
+
 }

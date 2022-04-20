@@ -1,5 +1,6 @@
 package com.nocountry.messenger.security.service;
 
+
 import com.nocountry.messenger.dto.request.ClientRequest;
 import com.nocountry.messenger.dto.response.ClientResponse;
 import com.nocountry.messenger.dto.response.ListClientResponse;
@@ -11,11 +12,13 @@ import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.NoSuchElementException;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
+
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -25,17 +28,20 @@ public class UserDetailsServiceImpl implements UserDetailsService, IClientServic
     private static final String USER_ID_NOT_FOUND = "User id {0} not found.";
     private static final String USER_NAME_NOT_FOUND = "UserName {0} not found.";
 
+
     @Autowired
     IClientRepository clientRepository;
 
     // Interfaz User Detail
     @Override
     @Transactional(propagation = Propagation.REQUIRED, rollbackFor = { Exception.class })
+
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
         Client user = clientRepository.findByUserName(username)
                 .orElseThrow(() -> new UsernameNotFoundException("User Not Found with username: " + username));
         return UserDetailsImpl.build(user);
     }
+
     
     // Interfaz Client
     @Override
@@ -117,7 +123,5 @@ public class UserDetailsServiceImpl implements UserDetailsService, IClientServic
                 .orElseThrow(() -> new NoSuchElementException(MessageFormat.format(USER_NAME_NOT_FOUND, userName)));
     }
     
-    
-
     
 }
