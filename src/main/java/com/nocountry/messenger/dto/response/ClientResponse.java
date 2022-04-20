@@ -1,10 +1,18 @@
 package com.nocountry.messenger.dto.response;
 
+import com.fasterxml.jackson.annotation.JsonInclude;
+import com.nocountry.messenger.model.entity.Client;
+import com.nocountry.messenger.model.entity.FriendshipInvitation;
 import com.nocountry.messenger.model.entity.Role;
+import java.util.List;
 import java.util.Set;
 import lombok.Builder;
+import lombok.Data;
 
+@Data
 @Builder
+@JsonInclude(JsonInclude.Include.NON_NULL)
+
 public class ClientResponse {
 
     private Long idClient;
@@ -19,6 +27,7 @@ public class ClientResponse {
     
     private String profileImage;
     
+
     private Set<Role> role; // ver
 
     public Long getIdClient() {
@@ -76,4 +85,13 @@ public class ClientResponse {
     public void setRole(Set<Role> role) {
         this.role = role;
     }
+
+    
+    private List<Client> friends;
+    
+    private Set<FriendshipInvitation> sendedInvitations;
+            
+    private Set<FriendshipInvitation> receivedInvitations;
+    
+
 }
