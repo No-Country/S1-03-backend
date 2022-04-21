@@ -14,7 +14,9 @@
     <name>messenger</name>
     <description>Messenger with Spring Boot</description>
     <properties>
-        <java.version>11</java.version>
+
+        <java.version>8</java.version>
+
     </properties>
     <dependencies>
         <dependency>
@@ -119,6 +121,23 @@
 
     <build>
         <plugins>
+          <plugin>
+                 <groupId>com.heroku.sdk</groupId>
+                 <artifactId>heroku-maven-plugin</artifactId>
+                 <version>3.0.3</version>
+         </plugin>
+          <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-dependency-plugin</artifactId>
+                <version>3.0.1</version>
+                <executions>
+                    <execution>
+                        <id>copy-dependencies</id>
+                        <phase>package</phase>
+                        <goals><goal>copy-dependencies</goal></goals>
+                    </execution>
+                </executions>
+            </plugin>
             <plugin>
                 <groupId>org.springframework.boot</groupId>
                 <artifactId>spring-boot-maven-plugin</artifactId>

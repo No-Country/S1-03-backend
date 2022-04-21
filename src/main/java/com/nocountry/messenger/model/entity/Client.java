@@ -2,11 +2,13 @@ package com.nocountry.messenger.model.entity;
 
 import java.io.Serializable;
 import java.time.LocalDate;
+
 import java.util.ArrayList;
 import java.util.Set;
 import java.util.HashSet;
 import java.util.List;
 import javax.persistence.CascadeType;
+
 import javax.persistence.Column;
 import javax.persistence.UniqueConstraint;
 import javax.persistence.Entity;
@@ -17,7 +19,9 @@ import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.JoinTable;
 import javax.persistence.ManyToMany;
+
 import javax.persistence.OneToMany;
+
 import javax.persistence.Table;
 import javax.validation.constraints.Email;
 import javax.validation.constraints.NotBlank;
@@ -55,8 +59,10 @@ public class Client implements Serializable {
     @Column(unique = true, name = "username")
     private String userName;
 
+
     @Column(name = "phone_number")
     private Long phoneNumber;
+
 
     @Column(name = "dni")
     private Long document;
@@ -81,15 +87,25 @@ public class Client implements Serializable {
     @Column(name = "profile_image")
     private String profileImage;
 
+
+    /*
+    COMENTADA HASTA REALIZAR LA RELACION BIEN
+    @Column(name = "friend_list")
+    private List<Client> friendList;
+     */
+
     @ManyToMany(fetch = FetchType.EAGER)
     @JoinTable(name = "users_roles",
             joinColumns = @JoinColumn(name = "id_user"),
             inverseJoinColumns = @JoinColumn(name = "id_role"))
+
     @Builder.Default
+
     private Set<Role> roles = new HashSet<>();
 
     @Column(name = "soft_delete")
     private boolean softDelete;
+
 
     @ManyToMany( fetch = FetchType.LAZY)  //FetchType cambiado a LAZY por stackOverflowerror
     @JoinTable(name = "friend_list",
@@ -134,4 +150,5 @@ public class Client implements Serializable {
         
         return false;
     }
+
 }
