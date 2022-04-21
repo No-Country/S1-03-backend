@@ -20,6 +20,18 @@ public class SignupRequest {
     @NotBlank
     @Size(min = 3, max = 40)
     private String username;
+    
+    @NotBlank
+    @Size(min = 3, max = 13)
+    private Long phoneNumber;
+        
+    @NotBlank
+    @Size(min = 3, max = 10)
+    private Long document;
+    
+    @NotBlank
+    @Size(min = 3, max = 40)
+    private String adress;
 
     @NotBlank
     @Size(max = 50)
@@ -34,3 +46,4 @@ public class SignupRequest {
 
     public SignupRequest() {
     }
+} 
