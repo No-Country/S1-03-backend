@@ -68,6 +68,7 @@
             <artifactId>jjwt</artifactId>
             <version>0.9.1</version>
         </dependency>
+<<<<<<< HEAD:pom.xml
         <dependency>
             <groupId>io.springfox</groupId>
             <artifactId>springfox-core</artifactId>
@@ -117,6 +118,8 @@
             <artifactId>jackson-databind</artifactId> 
             <version>2.13.2</version>
         </dependency>
+=======
+>>>>>>> parent of 42309d9 (Adding security to webSocket, dependencies added.):messenger/pom.xml
     </dependencies>
 
     <build>

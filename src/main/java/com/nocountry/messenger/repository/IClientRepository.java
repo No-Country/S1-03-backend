@@ -17,14 +17,7 @@ public interface IClientRepository extends JpaRepository< Client, Long> {
 
     Boolean existsByMail(String email);
 
-    Optional<Client> findByUserName(String userName);
-    
     Client getByUserName(String userName);
     
-    Boolean existsByUserName(String userName);
-
-    Boolean existsByMail(String email);
-    
     List<Client> findBySoftDeleteIsNullOrSoftDeleteIsFalse();
-    
 }
