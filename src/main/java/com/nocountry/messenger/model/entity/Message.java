@@ -8,7 +8,12 @@ public class Message {
     /*
         Modelo utilizado para enviar los mensajes
     */
-    private String from;
+    private EMessageType type;
+    
+    private String sender;
     
     private String text;
+    
+    private String time;
+    
 }

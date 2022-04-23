@@ -63,7 +63,7 @@ public class UserDetailsServiceImpl implements UserDetailsService, IClientServic
                     .lastName(client.getLastName())
                     .userName(client.getUserName())
                     .mail(client.getMail())
-                    .roles(client.getRoles())
+                    //.roles(client.getRoles())
                     .build();
 
             /*
@@ -98,7 +98,7 @@ public class UserDetailsServiceImpl implements UserDetailsService, IClientServic
                 .lastName(entity.getLastName())
                 .userName(entity.getUserName())
                 .mail(entity.getMail())
-                .roles(entity.getRoles())
+                //.roles(entity.getRoles())
                 .build();
     }
 
@@ -122,6 +122,4 @@ public class UserDetailsServiceImpl implements UserDetailsService, IClientServic
         return clientRepository.findByUserName(userName)
                 .orElseThrow(() -> new NoSuchElementException(MessageFormat.format(USER_NAME_NOT_FOUND, userName)));
     }
-    
-    
 }

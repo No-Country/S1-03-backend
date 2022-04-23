@@ -68,7 +68,6 @@
             <artifactId>jjwt</artifactId>
             <version>0.9.1</version>
         </dependency>
-<<<<<<< HEAD:pom.xml
         <dependency>
             <groupId>io.springfox</groupId>
             <artifactId>springfox-core</artifactId>
@@ -88,21 +87,17 @@
             <type>jar</type>
         </dependency>
         <dependency>
-            <groupId>io.springfox</groupId>
-            <artifactId>springfox-swagger2</artifactId>
-            <version>2.9.2</version>
-            <type>jar</type>
-         </dependency>
-         <dependency>
             <groupId>org.springframework</groupId>
             <artifactId>spring-websocket</artifactId>
             <version>5.3.16</version>
         </dependency>
+        <!--
         <dependency>
             <groupId>org.springframework</groupId>
             <artifactId>spring-messaging</artifactId>
             <version>5.3.16</version>
         </dependency>
+                -->
         <dependency>
             <groupId>com.fasterxml.jackson.core</groupId>
             <artifactId>jackson-core</artifactId>
@@ -118,18 +113,16 @@
             <artifactId>jackson-databind</artifactId> 
             <version>2.13.2</version>
         </dependency>
-=======
->>>>>>> parent of 42309d9 (Adding security to webSocket, dependencies added.):messenger/pom.xml
     </dependencies>
 
     <build>
         <plugins>
-          <plugin>
-                 <groupId>com.heroku.sdk</groupId>
-                 <artifactId>heroku-maven-plugin</artifactId>
-                 <version>3.0.3</version>
-         </plugin>
-          <plugin>
+            <plugin>
+                <groupId>com.heroku.sdk</groupId>
+                <artifactId>heroku-maven-plugin</artifactId>
+                <version>3.0.3</version>
+            </plugin>
+            <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-dependency-plugin</artifactId>
                 <version>3.0.1</version>
@@ -137,7 +130,9 @@
                     <execution>
                         <id>copy-dependencies</id>
                         <phase>package</phase>
-                        <goals><goal>copy-dependencies</goal></goals>
+                        <goals>
+                            <goal>copy-dependencies</goal>
+                        </goals>
                     </execution>
                 </executions>
             </plugin>
@@ -155,5 +150,4 @@
             </plugin>
         </plugins>
     </build>
-
 </project>

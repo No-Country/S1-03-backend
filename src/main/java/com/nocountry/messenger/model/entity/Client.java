@@ -59,10 +59,8 @@ public class Client implements Serializable {
     @Column(unique = true, name = "username")
     private String userName;
 
-
     @Column(name = "phone_number")
     private Long phoneNumber;
-
 
     @Column(name = "dni")
     private Long document;
@@ -87,25 +85,14 @@ public class Client implements Serializable {
     @Column(name = "profile_image")
     private String profileImage;
 
-
-    /*
-    COMENTADA HASTA REALIZAR LA RELACION BIEN
-    @Column(name = "friend_list")
-    private List<Client> friendList;
-     */
-
     @ManyToMany(fetch = FetchType.EAGER)
     @JoinTable(name = "users_roles",
             joinColumns = @JoinColumn(name = "id_user"),
             inverseJoinColumns = @JoinColumn(name = "id_role"))
-
-    @Builder.Default
-
     private Set<Role> roles = new HashSet<>();
 
     @Column(name = "soft_delete")
     private boolean softDelete;
-
 
     @ManyToMany( fetch = FetchType.LAZY)  //FetchType cambiado a LAZY por stackOverflowerror
     @JoinTable(name = "friend_list",
@@ -118,37 +105,4 @@ public class Client implements Serializable {
 
     @OneToMany(mappedBy = "receiver")
     private Set<FriendshipInvitation> receivedInvitations = new HashSet<>();
-
-    /*
-    public boolean canInvite(String email) {
-        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
-        String activeEmail = auth.getName();
-        if (email == activeEmail) {
-            return false;
-        }
-        for (User user : friends) {
-            if (user.getEmail().equals(activeEmail)) {
-                return false;
-            }
-        }
-        for (Invitation invitation : sendedInvitations) {
-            if (invitation.getReceiver().getEmail().equals(activeEmail)) {
-                return false;
-            }
-        }
-        for (Invitation invitation : receivedInvitations) {
-            if (invitation.getSender().getEmail().equals(activeEmail)) {
-                return false;
-            }
-        }
-        return true;
-    }
-    */
-    
-    public boolean canInvite(String username) {
-        
-        
-        return false;
-    }
-
 }

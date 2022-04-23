@@ -13,8 +13,7 @@ import org.springframework.stereotype.Service;
 @Service
 public interface IClientService {
     
-    void create(ClientRequest client) throws ClientAlreadyExist;
-
+    //void create(ClientRequest client) throws ClientAlreadyExist;
     
     void delete(Long id);
     
