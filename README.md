@@ -14,7 +14,7 @@ Está enfocado a un público que quiere un sistema de mensajería  rápido sin n
 <ul><li> El usuario podra loguearse, recordar su usuario y contraseña .</li></ul>
 
 
-<h4>:pushpin: Link Deploy: https://nocountry-chat.herokuapp.com/ </h4>
+<h4>:pushpin: Link Deploy: https://nocountry-messenger.herokuapp.com/ </h4>
 
 ***
 <h4>:books: Stack: </h4>
